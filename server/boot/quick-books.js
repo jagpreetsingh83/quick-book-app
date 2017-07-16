@@ -38,9 +38,32 @@ module.exports = app => {
       },
     };
     request.post(postBody, (error, response, body) => {
+
       let accessToken = qs.parse(body);
-      console.log(body);
-      res.json(body);
+      const token = accessToken.oauth_token;
+      const secret = accessToken.oauth_token_secret;
+      const companyId = postBody.oauth.realmId;
+
+      const QB = new QuickBooks(consumerKey,
+        consumerSecret,
+        token,
+        secret,
+        companyId,
+        true, // Sandbox
+        true); // Debug
+      QB.findCustomers({
+          limit: 2,
+        },
+        (err, results) => {
+          const customerList = results.QueryResponse.Customer;
+          app.models.Customer.destroyAll({});
+          customerList.forEach(
+            value => {
+              console.log(value);
+              app.models.Customer.create(value);
+            });
+        });
+      res.redirect('/explorer');
     });
   });
 };
