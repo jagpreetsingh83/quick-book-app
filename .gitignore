@@ -1,0 +1,8 @@
+.idea/
+reports/
+node_modules/
+*.log
+.nyc_output/
+logs/
+cucumber.json
+coverage
