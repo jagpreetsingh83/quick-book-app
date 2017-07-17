@@ -10,6 +10,26 @@ module.exports = app => {
   const consumer_key = qbConfig.consumerKey;
   const consumer_secret = qbConfig.consumerSecret;
 
+  const loadCustomers = (QB) => {
+    return new Promise((resolve, reject) => {
+      QB.findCustomers({
+          limit: 5
+        },
+        (err, results) => {
+          if (err) {
+            reject();
+          }
+          const customerList = results.QueryResponse.Customer;
+          app.models.Customer.destroyAll({});
+          customerList.forEach(
+            value => {
+              app.models.Customer.create(value);
+            });
+          resolve();
+        });
+    });
+  };
+
   /**
    * This route authenticates the application with the Quick Books.
    * A callback URL is provided for the Quick Book to revert with oauth token and secret.
@@ -42,6 +62,7 @@ module.exports = app => {
    * @param  {object} res - HttpResponse
    */
   app.get('/callback', (req, res) => {
+
     const postBody = {
       url: QuickBooks.ACCESS_TOKEN_URL,
       oauth: {
@@ -53,6 +74,7 @@ module.exports = app => {
         realmId: req.query.realmId
       }
     };
+
     // This call is made to obtain the Access Token
     request.post(postBody, (error, response, body) => {
       const verifiedAccessToken = qs.parse(body);
@@ -66,18 +88,13 @@ module.exports = app => {
         companyId,
         true, // Sandbox
         true); // Debug
-      QB.findCustomers({
-          limit: 5
-        },
-        (err, results) => {
-          const customerList = results.QueryResponse.Customer;
-          app.models.Customer.destroyAll({});
-          customerList.forEach(
-            value => {
-              app.models.Customer.create(value);
-            });
-          res.redirect('/');
-        });
+
+      // Save Quick Books in the Session
+      req.session.QB = QB;
+
+      loadCustomers(QB).then(() => {
+        res.redirect('/');
+      });
     });
   });
 };
