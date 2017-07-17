@@ -1,21 +1,21 @@
 'use strict';
 
-var loopback = require('loopback');
-var boot = require('loopback-boot');
-var cookieParser = require('cookie-parser');
-var session = require('express-session');
+const loopback = require('loopback');
+const boot = require('loopback-boot');
+const cookieParser = require('cookie-parser');
+const session = require('express-session');
 
-var app = module.exports = loopback();
+const app = module.exports = loopback();
 
 // Session
 app.use(cookieParser());
 app.use(session({
   secret: 'qb',
   cookie: {
-    maxAge: 60 * 60 * 1000,
+    maxAge: 60 * 60 * 1000
   },
   saveUninitialized: false,
-  resave: false,
+  resave: false
 }));
 
 app.start = () => {
@@ -34,9 +34,12 @@ app.start = () => {
 // Bootstrap the application, configure models, datasources and middleware.
 // Sub-apps like REST API are mounted via boot scripts.
 boot(app, __dirname, err => {
-  if (err) throw err;
+  if (err) {
+    throw err;
+  }
 
   // start the server if `$ node server.js`
-  if (require.main === module)
+  if (require.main === module) {
     app.start();
+  }
 });
