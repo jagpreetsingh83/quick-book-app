@@ -13,7 +13,7 @@ module.exports = app => {
   const loadCustomers = (QB) => {
     return new Promise((resolve, reject) => {
       QB.findCustomers({
-          limit: 5
+          limit: 1000
         },
         (err, results) => {
           if (err) {
