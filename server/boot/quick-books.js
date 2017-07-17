@@ -67,7 +67,7 @@ module.exports = app => {
         true, // Sandbox
         true); // Debug
       QB.findCustomers({
-          limit: 2
+          limit: 5
         },
         (err, results) => {
           const customerList = results.QueryResponse.Customer;
@@ -76,8 +76,8 @@ module.exports = app => {
             value => {
               app.models.Customer.create(value);
             });
+          res.redirect('/');
         });
-      res.redirect('/explorer');
     });
   });
 };
