@@ -24,5 +24,5 @@ http://localhost:3000/healthcheck
 
 ## References
 
-https://github.com/intuit/intuit-developer-nodejs
+https://github.com/intuit/intuit-developer-nodejs  
 https://github.com/puttareddy/quick-books-app
